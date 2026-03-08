@@ -23,7 +23,7 @@ export default function Layout() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-5 bg-bg-sidebar border-b border-border shrink-0">
+      <header className="flex items-center justify-between px-6 py-7 bg-bg-sidebar border-b border-border shrink-0">
         <div className="px-2">
           <p className="text-[8px] font-bold tracking-[0.32em] uppercase text-text-muted mb-0.5">
             Covington
