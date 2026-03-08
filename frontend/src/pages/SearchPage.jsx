@@ -244,7 +244,7 @@ export default function SearchPage() {
 
       {/* Main content */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto min-w-0 min-h-0">
-        <div className="max-w-[1100px]">
+        <div>
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
@@ -289,18 +289,18 @@ export default function SearchPage() {
                   gap: 14,
                   padding: '14px 16px 14px 20px',
                   borderRadius: 10,
-                  background: searchFocused ? '#151c19' : '#121816',
-                  border: `1px solid ${searchFocused ? 'rgba(77,184,164,0.25)' : 'rgba(255,255,255,0.06)'}`,
+                  background: searchFocused ? 'var(--color-bg-secondary)' : 'var(--color-bg-input)',
+                  border: `1px solid ${searchFocused ? 'var(--color-border-accent)' : 'var(--color-border-mid)'}`,
                   boxShadow: searchFocused
-                    ? '0 0 0 3px rgba(77,184,164,0.06), 0 4px 20px rgba(0,0,0,0.3)'
-                    : '0 2px 8px rgba(0,0,0,0.2)',
+                    ? '0 0 0 3px var(--color-accent-light), var(--shadow-md)'
+                    : 'var(--shadow-card)',
                 }}
                 onClick={() => document.getElementById('opd-search-input')?.focus()}
               >
                 <Search
                   size={18}
                   className="shrink-0 transition-colors duration-200"
-                  style={{ color: searchFocused ? '#4db8a4' : '#4a5955' }}
+                  style={{ color: searchFocused ? 'var(--color-accent)' : 'var(--color-text-muted)' }}
                   strokeWidth={2}
                 />
 
@@ -317,7 +317,7 @@ export default function SearchPage() {
                       animation: 'chipIn 0.15s ease',
                     }}
                   >
-                    <span style={{ fontSize: 11, fontWeight: 600, color: '#4db8a4', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--color-accent)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>
                       Exact
                     </span>
                     <button
@@ -327,7 +327,7 @@ export default function SearchPage() {
                       style={{
                         width: 14, height: 14, borderRadius: 3,
                         background: 'rgba(77,184,164,0.15)',
-                        border: 'none', cursor: 'pointer', color: '#4db8a4',
+                        border: 'none', cursor: 'pointer', color: 'var(--color-accent)',
                       }}
                       onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(77,184,164,0.25)'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(77,184,164,0.15)'; }}
@@ -352,7 +352,7 @@ export default function SearchPage() {
                     fontFamily: 'inherit',
                     fontSize: 15,
                     fontWeight: 400,
-                    color: '#e6eae8',
+                    color: 'var(--color-text-primary)',
                     letterSpacing: '-0.01em',
                     minWidth: 0,
                     background: 'none',
@@ -376,12 +376,12 @@ export default function SearchPage() {
                     className="shrink-0 flex items-center justify-center transition-colors duration-150"
                     style={{
                       width: 20, height: 20, borderRadius: 4,
-                      background: 'rgba(255,255,255,0.06)',
+                      background: 'var(--color-overlay-muted)',
                       border: 'none', cursor: 'pointer',
-                      color: '#5f706a',
+                      color: 'var(--color-text-muted)',
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#e6eae8'; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#5f706a'; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--color-overlay-hover)'; e.currentTarget.style.color = 'var(--color-text-primary)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--color-overlay-muted)'; e.currentTarget.style.color = 'var(--color-text-muted)'; }}
                     title="Clear search"
                   >
                     <X size={12} strokeWidth={2.5} />
@@ -399,8 +399,8 @@ export default function SearchPage() {
                       gap: 5,
                       padding: '5px 10px',
                       borderRadius: 5,
-                      background: exactMatch ? 'rgba(77,184,164,0.10)' : 'rgba(255,255,255,0.04)',
-                      border: `1px solid ${exactMatch ? 'rgba(77,184,164,0.20)' : 'rgba(255,255,255,0.06)'}`,
+                      background: exactMatch ? 'rgba(77,184,164,0.10)' : 'var(--color-overlay-subtle)',
+                      border: `1px solid ${exactMatch ? 'rgba(77,184,164,0.20)' : 'var(--color-border-mid)'}`,
                       cursor: 'pointer',
                     }}
                     title="Toggle exact phrase matching"
@@ -423,7 +423,7 @@ export default function SearchPage() {
                   </button>
 
                   {/* Divider */}
-                  <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.06)' }} />
+                  <div style={{ width: 1, height: 20, background: 'var(--color-border-mid)' }} />
 
                   {/* Search button */}
                   <button
@@ -431,9 +431,9 @@ export default function SearchPage() {
                     disabled={loading}
                     style={{
                       padding: '7px 18px', borderRadius: 6,
-                      background: '#4db8a4', border: 'none', cursor: 'pointer',
+                      background: 'var(--color-accent)', border: 'none', cursor: 'pointer',
                       fontFamily: 'inherit', fontSize: 13, fontWeight: 600,
-                      color: '#0b0e0d', letterSpacing: '0.01em',
+                      color: 'var(--color-text-on-dark)', letterSpacing: '0.01em',
                       transition: 'all 0.15s ease',
                       opacity: loading ? 0.5 : 1,
                     }}
@@ -447,11 +447,11 @@ export default function SearchPage() {
               {!results && (
                 <div style={{ marginTop: 10, padding: '0 20px', fontSize: 11, minHeight: 18 }}>
                   {exactMatch ? (
-                    <span style={{ color: '#4db8a4', fontWeight: 500 }}>
+                    <span style={{ color: 'var(--color-accent)', fontWeight: 500 }}>
                       Searching for exact phrase: &ldquo;{query || '...'}&rdquo;
                     </span>
                   ) : query.trim().includes(' ') ? (
-                    <span style={{ color: '#3c4b46' }}>
+                    <span style={{ color: 'var(--color-text-dim)' }}>
                       Results will match all words in any order
                     </span>
                   ) : null}
@@ -542,8 +542,8 @@ export default function SearchPage() {
                     onClick={() => handleSearch(term)}
                     className="px-3.5 py-2 rounded-lg text-[13px] text-text-secondary hover:text-white hover:border-white/10 transition-all duration-200 cursor-pointer"
                     style={{
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'var(--color-overlay-subtle)',
+                      border: '1px solid var(--color-border-mid)',
                     }}
                   >
                     {term}
@@ -623,8 +623,8 @@ export default function SearchPage() {
                         gap: 5,
                         padding: '5px 10px',
                         borderRadius: 5,
-                        background: showFilters ? 'rgba(77,184,164,0.08)' : 'rgba(255,255,255,0.04)',
-                        border: `1px solid ${showFilters ? 'rgba(77,184,164,0.15)' : 'rgba(255,255,255,0.06)'}`,
+                        background: showFilters ? 'rgba(77,184,164,0.08)' : 'var(--color-overlay-subtle)',
+                        border: `1px solid ${showFilters ? 'rgba(77,184,164,0.15)' : 'var(--color-border-mid)'}`,
                         cursor: 'pointer',
                         fontSize: 11,
                         fontWeight: 600,
@@ -639,7 +639,7 @@ export default function SearchPage() {
                           style={{
                             fontSize: 9,
                             fontWeight: 700,
-                            color: '#0b0e0d',
+                            color: 'var(--color-text-on-dark)',
                             background: 'var(--color-accent)',
                             borderRadius: 10,
                             padding: '1px 5px',
