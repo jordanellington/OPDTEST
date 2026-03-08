@@ -2,16 +2,14 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../hooks/useAuth';
-import { ArrowRight, KeyRound } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [devSession, setDevSession] = useState('');
-  const [showDevLogin, setShowDevLogin] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const { login, devLogin } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -28,20 +26,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleDevLogin = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      await devLogin(devSession);
-      navigate('/');
-    } catch {
-      setError('Invalid session ID.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div
       className="min-h-screen flex items-center justify-center"
@@ -53,22 +37,6 @@ export default function LoginPage() {
         transition={{ duration: 0.45 }}
         style={{ width: '100%', maxWidth: 400, padding: 24 }}
       >
-        {/* Branding */}
-        <div className="text-center mb-8">
-          <p
-            className="text-[10px] font-bold tracking-[0.32em] uppercase mb-3"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            Covington & Burling LLP
-          </p>
-          <h1
-            className="font-display text-[32px] font-normal leading-tight"
-            style={{ color: 'var(--color-text-primary)' }}
-          >
-            Corporate Opinion Letters
-          </h1>
-        </div>
-
         <div
           style={{
             background: 'var(--color-bg-secondary)',
@@ -88,150 +56,82 @@ export default function LoginPage() {
             Enter your credentials to continue
           </p>
 
-          {!showDevLogin ? (
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  className="block text-[11px] tracking-wider uppercase font-semibold"
-                  style={{ color: 'var(--color-text-muted)', marginBottom: 8 }}
-                >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
-                  placeholder="Username"
-                  required
-                  style={{
-                    width: '100%',
-                    background: 'var(--color-bg-primary)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: 10,
-                    padding: '12px 14px',
-                    fontSize: 14,
-                    color: 'var(--color-text-primary)',
-                    outline: 'none',
-                  }}
-                />
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  className="block text-[11px] tracking-wider uppercase font-semibold"
-                  style={{ color: 'var(--color-text-muted)', marginBottom: 8 }}
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  placeholder="Password"
-                  required
-                  style={{
-                    width: '100%',
-                    background: 'var(--color-bg-primary)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: 10,
-                    padding: '12px 14px',
-                    fontSize: 14,
-                    color: 'var(--color-text-primary)',
-                    outline: 'none',
-                  }}
-                />
-              </div>
-              {error && <p style={{ fontSize: 13, color: 'var(--color-status-red)', marginBottom: 16 }}>{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center justify-center gap-2"
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: 20 }}>
+              <label
+                className="block text-[11px] tracking-wider uppercase font-semibold"
+                style={{ color: 'var(--color-text-muted)', marginBottom: 8 }}
+              >
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={e => setUsername(e.target.value)}
+                placeholder="Username"
+                required
                 style={{
                   width: '100%',
-                  padding: '12px 0',
+                  background: 'var(--color-bg-primary)',
+                  border: '1px solid rgba(255,255,255,0.07)',
                   borderRadius: 10,
+                  padding: '12px 14px',
                   fontSize: 14,
-                  fontWeight: 600,
-                  background: 'var(--color-accent)',
-                  color: 'var(--color-bg-primary)',
-                  border: 'none',
-                  cursor: loading ? 'default' : 'pointer',
-                  opacity: loading ? 0.4 : 1,
+                  color: 'var(--color-text-primary)',
+                  outline: 'none',
                 }}
+              />
+            </div>
+            <div style={{ marginBottom: 20 }}>
+              <label
+                className="block text-[11px] tracking-wider uppercase font-semibold"
+                style={{ color: 'var(--color-text-muted)', marginBottom: 8 }}
               >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-bg-primary/30 border-t-bg-primary rounded-full animate-spin" />
-                ) : (
-                  <>Sign In <ArrowRight size={14} /></>
-                )}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleDevLogin}>
-              <div style={{ marginBottom: 20 }}>
-                <label
-                  className="block text-[11px] tracking-wider uppercase font-semibold"
-                  style={{ color: 'var(--color-text-muted)', marginBottom: 8 }}
-                >
-                  JSESSIONID
-                </label>
-                <input
-                  type="text"
-                  value={devSession}
-                  onChange={e => setDevSession(e.target.value)}
-                  placeholder="Paste your JSESSIONID"
-                  required
-                  style={{
-                    width: '100%',
-                    background: 'var(--color-bg-primary)',
-                    border: '1px solid rgba(255,255,255,0.07)',
-                    borderRadius: 10,
-                    padding: '12px 14px',
-                    fontSize: 14,
-                    color: 'var(--color-text-primary)',
-                    outline: 'none',
-                    fontFamily: 'monospace',
-                  }}
-                />
-              </div>
-              {error && <p style={{ fontSize: 13, color: 'var(--color-status-red)', marginBottom: 16 }}>{error}</p>}
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex items-center justify-center gap-2"
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="Password"
+                required
                 style={{
                   width: '100%',
-                  padding: '12px 0',
+                  background: 'var(--color-bg-primary)',
+                  border: '1px solid rgba(255,255,255,0.07)',
                   borderRadius: 10,
+                  padding: '12px 14px',
                   fontSize: 14,
-                  fontWeight: 600,
-                  background: 'var(--color-accent)',
-                  color: 'var(--color-bg-primary)',
-                  border: 'none',
-                  cursor: loading ? 'default' : 'pointer',
-                  opacity: loading ? 0.4 : 1,
+                  color: 'var(--color-text-primary)',
+                  outline: 'none',
                 }}
-              >
-                {loading ? (
-                  <div className="w-4 h-4 border-2 border-bg-primary/30 border-t-bg-primary rounded-full animate-spin" />
-                ) : (
-                  <>Connect Session <ArrowRight size={14} /></>
-                )}
-              </button>
-            </form>
-          )}
-
-          {/* Dev login toggle */}
-          <div className="mt-4 pt-4" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              />
+            </div>
+            {error && <p style={{ fontSize: 13, color: 'var(--color-status-red)', marginBottom: 16 }}>{error}</p>}
             <button
-              type="button"
-              onClick={() => { setShowDevLogin(!showDevLogin); setError(''); }}
-              className="flex items-center gap-2 w-full justify-center text-[12px] transition-colors"
-              style={{ color: 'var(--color-text-dim)', background: 'none', border: 'none', cursor: 'pointer' }}
+              type="submit"
+              disabled={loading}
+              className="flex items-center justify-center gap-2"
+              style={{
+                width: '100%',
+                padding: '12px 0',
+                borderRadius: 10,
+                fontSize: 14,
+                fontWeight: 600,
+                background: 'var(--color-accent)',
+                color: 'var(--color-bg-primary)',
+                border: 'none',
+                cursor: loading ? 'default' : 'pointer',
+                opacity: loading ? 0.4 : 1,
+              }}
             >
-              <KeyRound size={12} />
-              {showDevLogin ? 'Use credentials instead' : 'Dev login (JSESSIONID)'}
+              {loading ? (
+                <div className="w-4 h-4 border-2 border-bg-primary/30 border-t-bg-primary rounded-full animate-spin" />
+              ) : (
+                <>Sign In <ArrowRight size={14} /></>
+              )}
             </button>
-          </div>
+          </form>
         </div>
       </motion.div>
     </div>
