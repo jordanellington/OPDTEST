@@ -30,7 +30,7 @@ export default function Layout() {
           </p>
           <h1 className="font-display text-[20px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
-        <div className="flex items-center gap-3 pr-2">
+        <div className="flex items-center gap-3 pr-4">
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
