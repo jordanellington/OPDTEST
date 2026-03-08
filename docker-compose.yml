@@ -1,0 +1,27 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3002:3002"
+    environment:
+      - ALFRESCO_BASE_URL=https://secure.covi3.com
+      - PORT=3002
+      - NODE_ENV=development
+      - AWS_BEDROCK_ACCESS_KEY_ID=${AWS_BEDROCK_ACCESS_KEY_ID}
+      - AWS_BEDROCK_SECRET_ACCESS_KEY=${AWS_BEDROCK_SECRET_ACCESS_KEY}
+      - AWS_BEDROCK_REGION=${AWS_BEDROCK_REGION:-us-east-1}
+      - AWS_BEDROCK_MODEL_ID=${AWS_BEDROCK_MODEL_ID:-us.anthropic.claude-haiku-4-5-20251001-v1:0}
+    volumes:
+      - ./backend/src:/app/src
+      - ./data/rag-cache:/app/data/rag-cache
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5181:5181"
+    environment:
+      - VITE_API_URL=http://localhost:3002
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend

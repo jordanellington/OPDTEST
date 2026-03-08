@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.env
+data/rag-cache/
+*.log
+.DS_Store
