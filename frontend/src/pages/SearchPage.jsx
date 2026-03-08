@@ -251,18 +251,18 @@ export default function SearchPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
             style={{
-              padding: results ? '24px 28px 0' : '44px 56px 0',
-              marginBottom: results ? 16 : 32,
+              padding: results ? '14px 28px 0' : '44px 56px 0',
+              marginBottom: results ? 10 : 32,
               transition: 'all 0.3s ease',
             }}
           >
             <h1
               className="page-title text-text-primary leading-[1.1] tracking-[-0.02em]"
               style={{
-                fontSize: results ? 20 : 36,
+                fontSize: results ? 16 : 36,
                 fontFamily: results ? 'var(--font-body)' : 'var(--font-display)',
                 fontWeight: results ? 600 : 300,
-                marginBottom: results ? 6 : 10,
+                marginBottom: results ? 4 : 10,
                 transition: 'all 0.3s ease',
               }}
             >
