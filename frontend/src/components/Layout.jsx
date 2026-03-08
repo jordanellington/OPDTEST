@@ -19,7 +19,6 @@ export default function Layout() {
   const mainNav = [
     { to: '/', label: 'Dashboard', end: true },
     { to: '/search', label: 'Search' },
-    { to: '/browse', label: 'Browse' },
     { to: '/insights', label: 'Insights' },
   ];
 
@@ -64,8 +63,7 @@ export default function Layout() {
           <p className="text-[10px] font-bold tracking-[0.32em] uppercase text-text-muted mb-3">
             Covington
           </p>
-          <h1 className="font-display text-[32px] font-normal text-text-primary leading-none">Opinion Letters</h1>
-          <p className="mt-2 text-[11px] font-medium text-text-dim tracking-wide">v1.0</p>
+          <h1 className="font-display text-[28px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
 
         <div className="h-px bg-border mx-5 mb-4" />

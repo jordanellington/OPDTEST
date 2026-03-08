@@ -3,7 +3,9 @@ import { FileText, MapPin, User, Calendar, Building2 } from 'lucide-react';
 
 const practiceAreaColors = {
   Securities: { color: '#4db8a4', bg: 'rgba(77,184,164,0.08)', border: 'rgba(77,184,164,0.18)' },
+  'Securities & Capital Markets': { color: '#4db8a4', bg: 'rgba(77,184,164,0.08)', border: 'rgba(77,184,164,0.18)' },
   Finance: { color: '#6ba3e8', bg: 'rgba(107,163,232,0.08)', border: 'rgba(107,163,232,0.18)' },
+  'Finance & Lending': { color: '#6ba3e8', bg: 'rgba(107,163,232,0.08)', border: 'rgba(107,163,232,0.18)' },
   'PD&F': { color: '#c8a44e', bg: 'rgba(200,164,78,0.08)', border: 'rgba(200,164,78,0.18)' },
   'Project Development & Finance': { color: '#c8a44e', bg: 'rgba(200,164,78,0.08)', border: 'rgba(200,164,78,0.18)' },
 };
@@ -89,7 +91,7 @@ export default function ResultCard({ result, onClick, index = 0 }) {
         >
           {name}
         </span>
-        {pages && (
+        {pages != null && pages > 0 && (
           <span
             className="shrink-0"
             style={{

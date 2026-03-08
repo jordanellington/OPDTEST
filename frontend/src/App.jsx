@@ -2,7 +2,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
-import Browser from './pages/Browser';
 import SearchPage from './pages/SearchPage';
 import InsightsPage from './pages/InsightsPage';
 import Layout from './components/Layout';
@@ -29,8 +28,6 @@ function AppRoutes() {
         }
       >
         <Route index element={<Dashboard />} />
-        <Route path="browse" element={<Browser />} />
-        <Route path="browse/:nodeId" element={<Browser />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="insights" element={<InsightsPage />} />
       </Route>

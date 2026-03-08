@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { search } from '../lib/api';
 import FacetGroups from '../components/FacetGroups';
 import ResultCard from '../components/ResultCard';
+import DocumentViewer from '../components/DocumentViewer';
 import { Search, Loader2, X, ChevronUp, ChevronDown, SlidersHorizontal, Sparkles } from 'lucide-react';
 
 const SORT_OPTIONS = [
@@ -40,6 +41,7 @@ export default function SearchPage() {
   const [facets, setFacets] = useState(null);
   const [activeFilters, setActiveFilters] = useState({});
   const [showFilters, setShowFilters] = useState(true);
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
   const sentinelRef = useRef(null);
   const scrollRef = useRef(null);
   const initializedRef = useRef(false);
@@ -54,12 +56,14 @@ export default function SearchPage() {
       setQuery(q);
       setExactMatch(exact);
       setTimeout(() => handleSearch(q, exact), 0);
+    } else {
+      // Load all documents + facets on initial page load
+      handleSearch('', false);
     }
   }, []);
 
   const handleSearch = async (q, exactOverride, filtersOverride) => {
-    const searchQuery = q || query;
-    if (!searchQuery.trim()) return;
+    const searchQuery = q !== undefined ? q : query;
     setQuery(searchQuery);
     setLoading(true);
     try {
@@ -78,9 +82,11 @@ export default function SearchPage() {
       setTotalResults(data.list?.pagination?.totalItems || 0);
       setHasMore(data.list?.pagination?.hasMoreItems || false);
 
-      // Extract facets from context
+      // Extract facets from context (Alfresco 5.2 uses facetsFields)
       const ctx = data.list?.context;
-      if (ctx?.facetFields) {
+      if (ctx?.facetsFields) {
+        setFacets(ctx.facetsFields);
+      } else if (ctx?.facetFields) {
         setFacets(ctx.facetFields);
       } else if (ctx?.facets) {
         setFacets(ctx.facets);
@@ -117,19 +123,23 @@ export default function SearchPage() {
 
   // Re-search when sort changes (only if we have results)
   useEffect(() => {
-    if (results && query) handleSearch();
+    if (results) handleSearch();
   }, [sortBy, sortAsc]);
 
-  // Infinite scroll sentinel
+  // Keep loadMore in a ref so the observer doesn't need to re-create on every results change
+  const loadMoreRef = useRef(loadMore);
+  loadMoreRef.current = loadMore;
+
+  // Infinite scroll sentinel — only re-create observer when hasMore changes
   useEffect(() => {
     if (!sentinelRef.current || !hasMore) return;
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) loadMore(); },
+      ([entry]) => { if (entry.isIntersecting) loadMoreRef.current(); },
       { root: scrollRef.current, rootMargin: '200px' }
     );
     observer.observe(sentinelRef.current);
     return () => observer.disconnect();
-  }, [hasMore, results?.length, loadMore]);
+  }, [hasMore]);
 
   // Handle filter changes
   const handleFilterChange = (fieldName, value, checked) => {
@@ -148,9 +158,7 @@ export default function SearchPage() {
         }
       }
       // Re-search with updated filters
-      if (query.trim()) {
-        setTimeout(() => handleSearch(undefined, undefined, next), 0);
-      }
+      setTimeout(() => handleSearch(undefined, undefined, next), 0);
       return next;
     });
   };
@@ -161,9 +169,7 @@ export default function SearchPage() {
 
   const clearAllFilters = () => {
     setActiveFilters({});
-    if (query.trim()) {
-      setTimeout(() => handleSearch(undefined, undefined, {}), 0);
-    }
+    setTimeout(() => handleSearch(undefined, undefined, {}), 0);
   };
 
   // Count total active filters
@@ -178,10 +184,10 @@ export default function SearchPage() {
   });
 
   return (
-    <div className="flex h-full overflow-hidden">
+    <div className="flex h-full min-h-0 overflow-hidden">
       {/* Left sidebar — Facet filters */}
       <AnimatePresence>
-        {showFilters && results && facets && (
+        {showFilters && facets && (
           <motion.aside
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 280, opacity: 1 }}
@@ -237,7 +243,7 @@ export default function SearchPage() {
       </AnimatePresence>
 
       {/* Main content */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto min-w-0">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto min-w-0 min-h-0">
         <div className="max-w-[1100px]">
           {/* Header */}
           <motion.div
@@ -251,9 +257,11 @@ export default function SearchPage() {
             }}
           >
             <h1
-              className="page-title font-display font-light text-white leading-[1.08] tracking-[-0.02em]"
+              className="page-title text-white leading-[1.1] tracking-[-0.02em]"
               style={{
-                fontSize: results ? 24 : 42,
+                fontSize: results ? 20 : 36,
+                fontFamily: results ? 'var(--font-body)' : 'var(--font-display)',
+                fontWeight: results ? 600 : 300,
                 marginBottom: results ? 6 : 10,
                 transition: 'all 0.3s ease',
               }}
@@ -356,6 +364,30 @@ export default function SearchPage() {
                   }}
                 />
 
+                {/* Clear query button */}
+                {query && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setQuery('');
+                      document.getElementById('opd-search-input')?.focus();
+                    }}
+                    className="shrink-0 flex items-center justify-center transition-colors duration-150"
+                    style={{
+                      width: 20, height: 20, borderRadius: 4,
+                      background: 'rgba(255,255,255,0.06)',
+                      border: 'none', cursor: 'pointer',
+                      color: '#5f706a',
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.color = '#e6eae8'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#5f706a'; }}
+                    title="Clear search"
+                  >
+                    <X size={12} strokeWidth={2.5} />
+                  </button>
+                )}
+
                 {/* Right controls */}
                 <div className="flex items-center shrink-0" style={{ gap: 8 }}>
                   {/* Exact toggle button */}
@@ -411,18 +443,20 @@ export default function SearchPage() {
                 </div>
               </div>
 
-              {/* Hint text */}
-              <div style={{ marginTop: 10, padding: '0 20px', fontSize: 11, minHeight: 18 }}>
-                {exactMatch ? (
-                  <span style={{ color: '#4db8a4', fontWeight: 500 }}>
-                    Searching for exact phrase: &ldquo;{query || '...'}&rdquo;
-                  </span>
-                ) : query.trim().includes(' ') ? (
-                  <span style={{ color: '#3c4b46' }}>
-                    Results will match all words in any order
-                  </span>
-                ) : null}
-              </div>
+              {/* Hint text — hidden once results are showing */}
+              {!results && (
+                <div style={{ marginTop: 10, padding: '0 20px', fontSize: 11, minHeight: 18 }}>
+                  {exactMatch ? (
+                    <span style={{ color: '#4db8a4', fontWeight: 500 }}>
+                      Searching for exact phrase: &ldquo;{query || '...'}&rdquo;
+                    </span>
+                  ) : query.trim().includes(' ') ? (
+                    <span style={{ color: '#3c4b46' }}>
+                      Results will match all words in any order
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </form>
           </motion.div>
 
@@ -486,8 +520,8 @@ export default function SearchPage() {
             </div>
           )}
 
-          {/* Pre-search state */}
-          {!results && !loading && (
+          {/* Pre-search state — only shown before initial load */}
+          {!results && !loading && !facets && (
             <motion.div
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
@@ -530,7 +564,7 @@ export default function SearchPage() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1.5">
                     <Sparkles size={15} style={{ color: 'var(--color-accent-gold)' }} />
-                    <h3 className="font-display text-[16px] font-medium text-white">
+                    <h3 className="text-[15px] font-semibold text-white">
                       AI-Powered Search
                     </h3>
                   </div>
@@ -627,7 +661,7 @@ export default function SearchPage() {
                     <strong style={{ fontWeight: 600, color: 'var(--color-text-primary)' }}>
                       {totalResults.toLocaleString()}
                     </strong>{' '}
-                    results
+                    {query.trim() ? 'results' : 'opinion letters'}
                   </span>
                   {exactMatch && query && (
                     <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
@@ -688,11 +722,8 @@ export default function SearchPage() {
                         result={result}
                         index={i}
                         onClick={() => {
-                          // Open document — can be wired to DocumentViewer or navigation
                           const nodeId = result.entry?.id || result.id;
-                          if (nodeId) {
-                            window.open(`/browse/${nodeId}`, '_blank');
-                          }
+                          if (nodeId) setSelectedNodeId(nodeId);
                         }}
                       />
                     ))}
@@ -721,6 +752,13 @@ export default function SearchPage() {
           )}
         </div>
       </div>
+
+      {/* Document Viewer side panel */}
+      <AnimatePresence>
+        {selectedNodeId && (
+          <DocumentViewer nodeId={selectedNodeId} onClose={() => setSelectedNodeId(null)} searchQuery={query} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

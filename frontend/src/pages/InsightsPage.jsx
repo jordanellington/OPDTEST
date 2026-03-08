@@ -73,8 +73,8 @@ function ChartCard({ title, icon: Icon, children }) {
       <div className="flex items-center gap-2 mb-5">
         <Icon size={16} style={{ color: TEAL }} />
         <h3
-          className="text-[15px] font-medium"
-          style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+          className="text-[14px] font-semibold"
+          style={{ color: 'var(--color-text-primary)' }}
         >
           {title}
         </h3>
@@ -217,7 +217,13 @@ export default function InsightsPage() {
 
   /* Derive chart data from facets */
   const practiceAreaData = extractFacetData(facets, 'Practice Areas');
-  const providerData = extractFacetData(facets, 'Opinion Providers');
+  const rawProviderData = extractFacetData(facets, 'Opinion Providers');
+  const providerData = (() => {
+    if (rawProviderData.length <= 10) return rawProviderData;
+    const top = rawProviderData.slice(0, 9);
+    const otherCount = rawProviderData.slice(9).reduce((sum, d) => sum + d.count, 0);
+    return [...top, { label: 'Other', name: 'Other', count: otherCount, value: otherCount }];
+  })();
   const clientData = extractFacetData(facets, 'Clients', 10);
   const officeData = extractFacetData(facets, 'Offices');
 
@@ -295,14 +301,8 @@ export default function InsightsPage() {
       >
         {/* ── Header ── */}
         <motion.div variants={itemVariants} className="mb-10">
-          <p
-            className="text-[10px] font-bold tracking-[0.32em] uppercase mb-2"
-            style={{ color: 'var(--color-text-muted)' }}
-          >
-            Covington & Burling LLP
-          </p>
           <h1
-            className="text-[36px] font-normal leading-tight mb-2"
+            className="text-[36px] font-light leading-tight mb-2"
             style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
           >
             Insights & Analytics
@@ -318,8 +318,8 @@ export default function InsightsPage() {
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp size={14} style={{ color: TEAL }} />
             <h2
-              className="text-[18px] font-normal"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+              className="text-[18px] font-semibold tracking-[-0.01em]"
+              style={{ color: 'var(--color-text-primary)' }}
             >
               Live Reports
             </h2>
@@ -356,7 +356,7 @@ export default function InsightsPage() {
                   <YAxis
                     type="category"
                     dataKey="label"
-                    width={140}
+                    width={180}
                     tick={{ fill: '#9aa69f', fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
@@ -434,7 +434,7 @@ export default function InsightsPage() {
                   <YAxis
                     type="category"
                     dataKey="label"
-                    width={120}
+                    width={150}
                     tick={{ fill: '#9aa69f', fontSize: 10 }}
                     axisLine={false}
                     tickLine={false}
@@ -454,8 +454,8 @@ export default function InsightsPage() {
           <div className="flex items-center gap-2 mb-4">
             <Sparkles size={14} style={{ color: GOLD }} />
             <h2
-              className="text-[18px] font-normal"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+              className="text-[18px] font-semibold tracking-[-0.01em]"
+              style={{ color: 'var(--color-text-primary)' }}
             >
               Coming Soon
             </h2>

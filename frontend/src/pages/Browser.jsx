@@ -98,7 +98,7 @@ export default function Browser() {
               className="page-section-hero"
               style={{ padding: '44px 56px 0', marginBottom: 32 }}
             >
-              <h1 className="page-title font-display text-[42px] font-light text-white leading-[1.08] tracking-[-0.02em]" style={{ marginBottom: 10 }}>
+              <h1 className="page-title font-display text-[36px] font-light text-white leading-[1.1] tracking-[-0.02em]" style={{ marginBottom: 10 }}>
                 Browse Library
               </h1>
               <p className="text-text-muted text-[14px]">Browse the opinion letters document library</p>
@@ -185,7 +185,8 @@ export default function Browser() {
                   <div>
                     {files.map((file, i) => {
                       const props = file.properties || {};
-                      const pages = props['eci:pages'] || '—';
+                      const rawPages = props['eci:pages'];
+                      const pages = rawPages != null && rawPages > 0 ? rawPages : '—';
                       const size = formatSize(file.content?.sizeInBytes);
                       const modified = formatDate(file.modifiedAt);
                       const practiceArea = props['corpkmdcf:opinionTypes'];

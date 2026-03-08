@@ -149,6 +149,10 @@ export function getContentUrl(nodeId, download = false) {
   return `${API_URL}/api/nodes/${nodeId}/content?sid=${sessionId}${download ? '&download=true' : ''}`;
 }
 
+export function getRenditionUrl(nodeId) {
+  return `${API_URL}/api/nodes/${nodeId}/rendition/pdf?sid=${sessionId}`;
+}
+
 export async function chatStream(messages, doc, onDelta, onDone, onError, onStatus) {
   const resp = await fetch(`${API_URL}/api/chat`, {
     method: 'POST',

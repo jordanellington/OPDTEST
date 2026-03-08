@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-  X, Download, FileText, Calendar, Layers, ExternalLink,
+  X, Download, FileText, Calendar, Layers, ExternalLink, Loader2,
   ChevronDown, ChevronUp, Sparkles, Search, User, Building2,
   Briefcase, MapPin, Scale, Globe, Shield, Hash, Users, Gavel,
 } from 'lucide-react';
-import { getNode, getContentUrl } from '../lib/api';
+import { getNode, getContentUrl, getRenditionUrl } from '../lib/api';
 
 import { Worker, Viewer } from '@react-pdf-viewer/core';
 import { toolbarPlugin } from '@react-pdf-viewer/toolbar';
@@ -93,7 +93,7 @@ function getMetadataFields(props) {
     { label: 'SEC Filing',          value: fmt(props['corpkmdcf:opinionFilledWithSec']),               icon: Gavel },
     { label: 'Recipients',          value: fmtArray(props['corpkmdcf:recipientsAndRoles']),            icon: Users },
     { label: 'Other Firms',         value: fmtArray(props['corpkmdcf:firmsAndRoles']),                 icon: Building2 },
-    { label: 'Pages',               value: fmt(props['eci:pages']),                                    icon: Layers },
+    { label: 'Pages',               value: (props['eci:pages'] != null && props['eci:pages'] > 0) ? String(props['eci:pages']) : '—', icon: Layers },
   ];
 }
 
@@ -263,8 +263,71 @@ function PdfViewer({ fileUrl, searchQuery }) {
   );
 }
 
+/* ── Rendition Viewer — tries PDF rendition for non-PDF files ── */
+function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery }) {
+  const [status, setStatus] = useState('loading'); // loading | ready | unavailable
+  const renditionUrl = getRenditionUrl(nodeId);
+
+  useEffect(() => {
+    setStatus('loading');
+    let cancelled = false;
+    fetch(renditionUrl).then((resp) => {
+      if (cancelled) return;
+      if (resp.status === 200) {
+        setStatus('ready');
+      } else if (resp.status === 202 || resp.status === 404) {
+        // Rendition requested or not yet created — poll a few times
+        let retries = 0;
+        const poll = setInterval(async () => {
+          retries++;
+          if (retries > 8 || cancelled) { clearInterval(poll); if (!cancelled) setStatus('unavailable'); return; }
+          const r = await fetch(renditionUrl);
+          if (r.status === 200 && !cancelled) { clearInterval(poll); setStatus('ready'); }
+        }, 3000);
+      } else {
+        setStatus('unavailable');
+      }
+    }).catch(() => { if (!cancelled) setStatus('unavailable'); });
+    return () => { cancelled = true; };
+  }, [nodeId, renditionUrl]);
+
+  if (status === 'loading') {
+    return (
+      <div className="flex items-center justify-center h-full" style={{ background: '#3a3d41' }}>
+        <div className="text-center">
+          <Loader2 size={24} className="text-accent animate-spin mx-auto mb-3" />
+          <p className="text-text-muted text-xs">Generating PDF preview...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'ready') {
+    return <PdfViewer fileUrl={renditionUrl} searchQuery={searchQuery} />;
+  }
+
+  // Fallback — no rendition available
+  return (
+    <div className="flex items-center justify-center h-full p-6" style={{ background: '#3a3d41' }}>
+      <div className="text-center">
+        <FileText size={40} className="text-text-muted mx-auto mb-4" strokeWidth={1} />
+        <p className="text-text-muted text-sm mb-4">{mimeType || 'Document'}</p>
+        <a
+          href={contentUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-text-on-dark rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors"
+        >
+          <ExternalLink size={14} />
+          Open File
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /* ── Main DocumentViewer ── */
-export default function DocumentViewer({ nodeId, onClose }) {
+export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
   const [doc, setDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -338,7 +401,8 @@ export default function DocumentViewer({ nodeId, onClose }) {
   const name = node.name || 'Untitled';
   const contentUrl = getContentUrl(node.id || nodeId);
   const isPdf = name.toLowerCase().endsWith('.pdf');
-  const pages = props['eci:pages'] || '—';
+  const rawPages = props['eci:pages'];
+  const pages = (rawPages != null && rawPages > 0) ? rawPages : '—';
   const size = node.content?.sizeInBytes
     ? (node.content.sizeInBytes / 1024 / 1024).toFixed(2) + ' MB'
     : '—';
@@ -374,7 +438,7 @@ export default function DocumentViewer({ nodeId, onClose }) {
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <FileText size={15} style={{ color: 'var(--color-accent)' }} className="shrink-0" strokeWidth={1.5} />
-          <h2 className="text-[14px] font-semibold truncate" style={{ fontFamily: 'var(--font-display)' }}>
+          <h2 className="text-[14px] font-semibold truncate">
             {name}
           </h2>
         </div>
@@ -393,23 +457,9 @@ export default function DocumentViewer({ nodeId, onClose }) {
       <div className="flex-1 min-h-0 flex flex-col">
         <div className="min-h-0 overflow-hidden" style={{ flex: '1 1 0%' }}>
           {isPdf ? (
-            <PdfViewer fileUrl={contentUrl} />
+            <PdfViewer fileUrl={contentUrl} searchQuery={searchQuery} />
           ) : (
-            <div className="flex items-center justify-center h-full p-6" style={{ background: '#3a3d41' }}>
-              <div className="text-center">
-                <FileText size={40} className="text-text-muted mx-auto mb-4" strokeWidth={1} />
-                <p className="text-text-muted text-sm mb-4">{node.content?.mimeType || 'Document'}</p>
-                <a
-                  href={contentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-accent text-text-on-dark rounded-lg text-sm font-medium hover:bg-accent-hover transition-colors"
-                >
-                  <ExternalLink size={14} />
-                  Open File
-                </a>
-              </div>
-            </div>
+            <RenditionViewer nodeId={node.id || nodeId} contentUrl={contentUrl} mimeType={node.content?.mimeType} searchQuery={searchQuery} />
           )}
         </div>
       </div>

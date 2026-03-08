@@ -60,7 +60,7 @@ function ComingSoonCard({ icon: Icon, title, description, delay = 0 }) {
           </span>
         </div>
         <h3
-          className="font-display text-[17px] font-normal text-white"
+          className="text-[15px] font-semibold text-white"
           style={{ marginBottom: 6 }}
         >
           {title}
@@ -146,13 +146,13 @@ export default function Dashboard() {
         style={{ padding: '44px 56px 0' }}
       >
         <h1
-          className="page-title font-display text-[42px] font-light text-white leading-[1.08] tracking-[-0.02em]"
+          className="page-title font-display text-[36px] font-light text-white leading-[1.1] tracking-[-0.02em]"
           style={{ marginBottom: 10 }}
         >
           Corporate Opinion Letters
         </h1>
         <p
-          className="page-subtitle text-text-muted text-[14px]"
+          className="page-subtitle text-text-muted text-[13px]"
           style={{ marginBottom: 28 }}
         >
           Covington &amp; Burling LLP &mdash; Securities Practice Opinions Database
@@ -287,7 +287,7 @@ export default function Dashboard() {
           style={{ padding: '0 56px 48px' }}
         >
           <div className="flex items-baseline justify-between" style={{ marginBottom: 20 }}>
-            <h2 className="section-heading font-display text-[24px] font-normal text-white">
+            <h2 className="section-heading text-[20px] font-semibold text-white tracking-[-0.01em]">
               Practice Areas
             </h2>
             <span className="text-[11px] font-medium text-text-muted">
@@ -363,7 +363,7 @@ export default function Dashboard() {
         style={{ padding: '0 56px 48px' }}
       >
         <div style={{ marginBottom: 20 }}>
-          <h2 className="section-heading font-display text-[24px] font-normal text-white">
+          <h2 className="section-heading text-[20px] font-semibold text-white tracking-[-0.01em]">
             Coming Soon
           </h2>
         </div>

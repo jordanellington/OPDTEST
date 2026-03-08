@@ -441,9 +441,52 @@ app.get('/api/nodes/:nodeId/content', requireAuth, async (req, res) => {
   }
 });
 
+// --------------- PDF Rendition (for Office docs) ---------------
+
+app.get('/api/nodes/:nodeId/rendition/pdf', requireAuth, async (req, res) => {
+  const { nodeId } = req.params;
+  console.log('[rendition] Requested PDF rendition for node:', nodeId);
+  try {
+    // Try the v1 renditions API first
+    const resp = await alfrescoFetch(
+      `${ALFRESCO_API}/alfresco/versions/1/nodes/${nodeId}/renditions/pdf/content`,
+      req.session
+    );
+
+    if (resp.ok) {
+      res.set('Content-Type', 'application/pdf');
+      res.set('Content-Disposition', 'inline');
+      const buffer = await resp.arrayBuffer();
+      return res.send(Buffer.from(buffer));
+    }
+
+    // If rendition doesn't exist yet, request creation and return 202
+    if (resp.status === 404) {
+      // Try to create the rendition
+      await alfrescoPost(
+        `${ALFRESCO_API}/alfresco/versions/1/nodes/${nodeId}/renditions`,
+        req.session,
+        { id: 'pdf' }
+      );
+      return res.status(202).json({ message: 'Rendition requested, try again shortly' });
+    }
+
+    if (resp.status === 401 || resp.status === 403) {
+      sessions.delete(req.sessionId);
+      return res.status(401).json({ error: 'Session expired' });
+    }
+
+    res.status(resp.status).json({ error: 'Rendition not available' });
+  } catch (err) {
+    if (handleAlfrescoExpiry(err, req, res)) return;
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // --------------- Stats ---------------
 
 app.get('/api/stats', requireAuth, async (req, res) => {
+  console.log('[stats] called, session user:', req.session?.username);
   try {
     // Get total document count
     const countResp = await alfrescoPost(
@@ -454,7 +497,7 @@ app.get('/api/stats', requireAuth, async (req, res) => {
           query: `SITE:${OPD_SITE_ID} AND TYPE:"dcf:fileUpload"`,
           language: 'afts'
         },
-        paging: { maxItems: 0 },
+        paging: { maxItems: 1 },
         facetFields: {
           facets: [
             { field: 'corpkmdcf:opinionTypes', label: 'Practice Areas', mincount: 1 },
@@ -469,13 +512,30 @@ app.get('/api/stats', requireAuth, async (req, res) => {
       }
     );
 
-    const countData = await countResp.json();
+    const countText = await countResp.text();
+    console.log('[stats] Alfresco response status:', countResp.status, '| body preview:', countText.substring(0, 300));
+    const countData = JSON.parse(countText);
 
     // Extract facet data for dashboard
+    // Alfresco returns field QNames as facet labels; map to our requested labels
+    const LABEL_MAP = {
+      'corpkmdcf:opinionTypes': 'Practice Areas',
+      'corpkmdcf:opinionProvider': 'Opinion Providers',
+      'corpkmdcf:usJurisdictions': 'US Jurisdictions',
+      'corpkmdcf:nonUsJurisdictions': 'Non-US Jurisdictions',
+      'corpkmdcf:covingtonOffice': 'Offices',
+      'corpkmdcf:clientName': 'Clients',
+      'corpkmdcf:covingtonLawyerSigningOpinion': 'Signatories',
+    };
     const facets = {};
-    const facetFields = countData.context?.facets || countData.context?.facetFields || [];
+    const facetFields = countData.list?.context?.facetsFields
+      || countData.list?.context?.facetFields
+      || countData.context?.facetsFields
+      || countData.context?.facetFields
+      || [];
     for (const facet of facetFields) {
-      facets[facet.label] = facet.buckets?.map(b => ({
+      const key = LABEL_MAP[facet.label] || facet.label;
+      facets[key] = facet.buckets?.map(b => ({
         value: b.label || b.filterQuery,
         count: b.count || b.metrics?.[0]?.value?.count || 0
       })) || [];
