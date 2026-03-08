@@ -1,9 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import LoginPage from './pages/LoginPage';
-import Dashboard from './pages/Dashboard';
 import SearchPage from './pages/SearchPage';
-import InsightsPage from './pages/InsightsPage';
 import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
@@ -27,9 +25,7 @@ function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Dashboard />} />
-        <Route path="search" element={<SearchPage />} />
-        <Route path="insights" element={<InsightsPage />} />
+        <Route index element={<SearchPage />} />
       </Route>
     </Routes>
   );
