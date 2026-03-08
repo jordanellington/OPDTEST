@@ -28,7 +28,7 @@ const PRACTICE_COLORS = {
   'Tax':                { color: '#d9a57b', bg: 'rgba(217,165,123,0.10)', border: 'rgba(217,165,123,0.20)' },
   'Insurance':          { color: '#9b7bd9', bg: 'rgba(155,123,217,0.10)', border: 'rgba(155,123,217,0.20)' },
 };
-const DEFAULT_BADGE = { color: '#9aa69f', bg: 'rgba(154,166,159,0.10)', border: 'rgba(154,166,159,0.20)' };
+const DEFAULT_BADGE = { color: 'var(--color-text-secondary)', bg: 'rgba(154,166,159,0.10)', border: 'rgba(154,166,159,0.20)' };
 
 function PracticeAreaBadge({ value }) {
   if (!value) return <span className="text-text-muted">—</span>;
@@ -134,7 +134,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
           style={{
             padding: '6px 12px',
             background: 'var(--color-bg-secondary)',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
+            borderBottom: '1px solid var(--color-border)',
           }}
         >
           <Toolbar>
@@ -159,7 +159,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                           disabled={props.isDisabled}
                           style={{
                             background: 'none', border: 'none', cursor: props.isDisabled ? 'default' : 'pointer',
-                            color: props.isDisabled ? '#3c4b46' : '#9aa69f', padding: '4px 6px', borderRadius: 4,
+                            color: props.isDisabled ? 'var(--color-text-dim)' : 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
                             display: 'flex', alignItems: 'center',
                           }}
                         >
@@ -167,9 +167,9 @@ function PdfViewer({ fileUrl, searchQuery }) {
                         </button>
                       )}
                     </GoToPreviousPage>
-                    <div className="flex items-center gap-1" style={{ color: '#9aa69f' }}>
+                    <div className="flex items-center gap-1" style={{ color: 'var(--color-text-secondary)' }}>
                       <CurrentPageInput />
-                      <span style={{ color: '#5f706a' }}>/</span>
+                      <span style={{ color: 'var(--color-text-muted)' }}>/</span>
                       <NumberOfPages />
                     </div>
                     <GoToNextPage>
@@ -179,7 +179,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                           disabled={props.isDisabled}
                           style={{
                             background: 'none', border: 'none', cursor: props.isDisabled ? 'default' : 'pointer',
-                            color: props.isDisabled ? '#3c4b46' : '#9aa69f', padding: '4px 6px', borderRadius: 4,
+                            color: props.isDisabled ? 'var(--color-text-dim)' : 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
                             display: 'flex', alignItems: 'center',
                           }}
                         >
@@ -199,7 +199,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                         onClick={props.onClick}
                         style={{
                           background: 'none', border: 'none', cursor: 'pointer',
-                          color: '#9aa69f', padding: '4px 6px', borderRadius: 4,
+                          color: 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
                           display: 'flex', alignItems: 'center',
                         }}
                       >
@@ -216,7 +216,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                           onClick={props.onClick}
                           style={{
                             background: 'none', border: 'none', cursor: 'pointer',
-                            color: '#9aa69f', padding: '4px 8px', borderRadius: 4, fontSize: 14,
+                            color: 'var(--color-text-secondary)', padding: '4px 8px', borderRadius: 4, fontSize: 14,
                           }}
                         >
                           −
@@ -225,7 +225,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                     </ZoomOut>
                     <Zoom>
                       {(props) => (
-                        <span style={{ color: '#9aa69f', fontSize: 11, minWidth: 40, textAlign: 'center' }}>
+                        <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, minWidth: 40, textAlign: 'center' }}>
                           {Math.round(props.scale * 100)}%
                         </span>
                       )}
@@ -236,7 +236,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
                           onClick={props.onClick}
                           style={{
                             background: 'none', border: 'none', cursor: 'pointer',
-                            color: '#9aa69f', padding: '4px 8px', borderRadius: 4, fontSize: 14,
+                            color: 'var(--color-text-secondary)', padding: '4px 8px', borderRadius: 4, fontSize: 14,
                           }}
                         >
                           +
@@ -251,7 +251,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
         </div>
 
         {/* PDF pages */}
-        <div className="flex-1 min-h-0" style={{ background: '#3a3d41' }}>
+        <div className="flex-1 min-h-0" style={{ background: 'var(--color-bg-elevated)' }}>
           <Viewer
             fileUrl={fileUrl}
             plugins={[toolbarPluginInstance, searchPluginInstance]}
@@ -293,7 +293,7 @@ function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery }) {
 
   if (status === 'loading') {
     return (
-      <div className="flex items-center justify-center h-full" style={{ background: '#3a3d41' }}>
+      <div className="flex items-center justify-center h-full" style={{ background: 'var(--color-bg-elevated)' }}>
         <div className="text-center">
           <Loader2 size={24} className="text-accent animate-spin mx-auto mb-3" />
           <p className="text-text-muted text-xs">Generating PDF preview...</p>
@@ -308,7 +308,7 @@ function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery }) {
 
   // Fallback — no rendition available
   return (
-    <div className="flex items-center justify-center h-full p-6" style={{ background: '#3a3d41' }}>
+    <div className="flex items-center justify-center h-full p-6" style={{ background: 'var(--color-bg-elevated)' }}>
       <div className="text-center">
         <FileText size={40} className="text-text-muted mx-auto mb-4" strokeWidth={1} />
         <p className="text-text-muted text-sm mb-4">{mimeType || 'Document'}</p>
@@ -364,7 +364,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid rgba(255,255,255,0.07)',
+          borderLeft: '1px solid var(--color-border-mid)',
         }}
       >
         <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
@@ -387,7 +387,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid rgba(255,255,255,0.07)',
+          borderLeft: '1px solid var(--color-border-mid)',
         }}
       >
         <p className="text-status-red text-sm">{error || 'Document not found'}</p>
@@ -423,7 +423,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         minWidth: 340,
         flex: '0 1 auto',
         background: 'var(--color-bg-secondary)',
-        borderLeft: '1px solid rgba(255,255,255,0.07)',
+        borderLeft: '1px solid var(--color-border-mid)',
       }}
     >
       {/* ── Header ── */}
@@ -432,8 +432,8 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         style={{
           padding: '12px 16px',
           background: 'var(--color-bg-elevated)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+          borderBottom: '1px solid var(--color-border)',
+          boxShadow: 'var(--shadow-card)',
         }}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -468,8 +468,8 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
       <div
         style={{
           background: 'var(--color-bg-elevated)',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-          boxShadow: '0 -1px 3px rgba(0,0,0,0.2)',
+          borderTop: '1px solid var(--color-border)',
+          boxShadow: 'var(--shadow-card)',
         }}
         className="shrink-0"
       >
@@ -517,9 +517,9 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
               title="AI chat coming soon"
               className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold cursor-not-allowed"
               style={{
-                background: 'rgba(255,255,255,0.04)',
+                background: 'var(--color-overlay-subtle)',
                 color: 'var(--color-text-secondary)',
-                border: '1px solid rgba(255,255,255,0.07)',
+                border: '1px solid var(--color-border-mid)',
                 opacity: 0.7,
               }}
             >
@@ -546,7 +546,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={{ padding: '4px 16px 14px', borderTop: '1px solid rgba(255,255,255,0.04)', overflow: 'hidden' }}
+            style={{ padding: '4px 16px 14px', borderTop: '1px solid var(--color-border)', overflow: 'hidden' }}
           >
             <div className="details-grid grid grid-cols-3 gap-x-6 gap-y-3">
               {metadataFields.map((field) => {

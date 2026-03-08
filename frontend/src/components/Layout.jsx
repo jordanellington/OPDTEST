@@ -6,7 +6,7 @@ import { LogOut, Sun, Moon } from 'lucide-react';
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
 
   useEffect(() => {
     document.documentElement.classList.toggle('light', theme === 'light');
@@ -23,14 +23,14 @@ export default function Layout() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       {/* Top bar */}
-      <header className="flex items-center justify-between px-6 py-3 bg-bg-sidebar border-b border-border shrink-0">
+      <header className="flex items-center justify-between px-6 py-5 bg-bg-sidebar border-b border-border shrink-0">
         <div className="px-2">
           <p className="text-[8px] font-bold tracking-[0.32em] uppercase text-text-muted mb-0.5">
             Covington
           </p>
           <h1 className="font-display text-[20px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 pr-2">
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
