@@ -251,6 +251,13 @@ body {
 html.light .rpv-dark-theme .rpv-core__viewer {
   background-color: #e8eaea;
 }
+html.light .rpv-dark-theme .rpv-core__inner-container,
+html.light .rpv-dark-theme .rpv-core__inner-pages {
+  background-color: #e8eaea;
+}
+html.light .rpv-dark-theme {
+  background-color: #e8eaea;
+}
 html.light .rpv-dark-theme .rpv-core__textbox {
   background-color: #ffffff;
   border-color: rgba(0,0,0,0.12);
