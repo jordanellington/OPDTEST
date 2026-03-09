@@ -24,13 +24,13 @@ export default function Layout() {
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       {/* Top bar */}
       <header className="flex items-center justify-between px-6 bg-bg-sidebar border-b border-border shrink-0" style={{ paddingTop: 20, paddingBottom: 20 }}>
-        <div className="px-2">
-          <p className="text-[8px] font-bold tracking-[0.32em] uppercase text-text-muted mb-0.5">
+        <div className="px-4">
+          <p className="text-[10px] font-bold tracking-[0.32em] uppercase text-text-muted mb-0.5">
             Covington
           </p>
-          <h1 className="font-display text-[20px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
+          <h1 className="font-display text-[24px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
-        <div className="flex items-center gap-3 pr-4">
+        <div className="flex items-center gap-3 pr-6">
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"

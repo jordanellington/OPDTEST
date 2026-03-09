@@ -245,42 +245,40 @@ export default function SearchPage() {
       {/* Main content */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto min-w-0 min-h-0">
         <div>
-          {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            style={{
-              padding: results ? '14px 28px 0' : '44px 56px 0',
-              marginBottom: results ? 10 : 32,
-              transition: 'all 0.3s ease',
-            }}
-          >
-            <h1
-              className="page-title text-text-primary leading-[1.1] tracking-[-0.02em]"
+          {/* Header — only shown before initial results load */}
+          {!results && (
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
               style={{
-                fontSize: results ? 16 : 36,
-                fontFamily: results ? 'var(--font-body)' : 'var(--font-display)',
-                fontWeight: results ? 600 : 300,
-                marginBottom: results ? 4 : 10,
-                transition: 'all 0.3s ease',
+                padding: '44px 56px 0',
+                marginBottom: 32,
               }}
             >
-              Search
-            </h1>
-            {!results && (
+              <h1
+                className="page-title text-text-primary leading-[1.1] tracking-[-0.02em]"
+                style={{
+                  fontSize: 36,
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 300,
+                  marginBottom: 10,
+                }}
+              >
+                Search
+              </h1>
               <p className="text-text-muted text-[14px]">
                 Search across Covington's corporate opinion letter library
               </p>
-            )}
-          </motion.div>
+            </motion.div>
+          )}
 
           {/* Search Input */}
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.05, duration: 0.45 }}
-            style={{ padding: results ? '0 28px 20px' : '0 56px 40px' }}
+            style={{ padding: results ? '14px 28px 28px' : '0 56px 40px' }}
           >
             <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
               <div
