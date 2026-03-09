@@ -127,7 +127,7 @@ function PdfViewer({ fileUrl, searchQuery }) {
 
   return (
     <Worker workerUrl={WORKER_URL}>
-      <div className="h-full flex flex-col rpv-dark-theme">
+      <div className="h-full flex flex-col rpv-dark-theme" style={{ backgroundColor: 'var(--color-bg-elevated)' }}>
         {/* Custom toolbar */}
         <div
           className="viewer-toolbar shrink-0 flex items-center justify-between"

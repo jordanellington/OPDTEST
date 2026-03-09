@@ -248,15 +248,12 @@ body {
 }
 
 /* ===== PDF Viewer — Light Mode Overrides ===== */
-html.light .rpv-dark-theme .rpv-core__viewer {
-  background-color: #e8eaea;
-}
+html.light .rpv-dark-theme,
+html.light .rpv-dark-theme .rpv-core__viewer,
 html.light .rpv-dark-theme .rpv-core__inner-container,
-html.light .rpv-dark-theme .rpv-core__inner-pages {
-  background-color: #e8eaea;
-}
-html.light .rpv-dark-theme {
-  background-color: #e8eaea;
+html.light .rpv-dark-theme .rpv-core__inner-pages,
+html.light .rpv-dark-theme div[class^="rpv-core"] {
+  background-color: #e8eaea !important;
 }
 html.light .rpv-dark-theme .rpv-core__textbox {
   background-color: #ffffff;
