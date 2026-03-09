@@ -24,7 +24,7 @@ export default function Layout() {
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       {/* Top bar */}
       <header className="flex items-center justify-between px-6 bg-bg-sidebar border-b border-border shrink-0" style={{ paddingTop: 20, paddingBottom: 20 }}>
-        <div className="px-4">
+        <div style={{ paddingLeft: 8 }}>
           <p className="text-[10px] font-bold tracking-[0.32em] uppercase text-text-muted mb-0.5">
             Covington
           </p>
