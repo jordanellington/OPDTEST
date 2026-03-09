@@ -364,7 +364,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid var(--color-border-mid)',
+          borderLeft: '1px solid var(--color-border)',
         }}
       >
         <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
@@ -387,7 +387,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid var(--color-border-mid)',
+          borderLeft: '1px solid var(--color-border)',
         }}
       >
         <p className="text-status-red text-sm">{error || 'Document not found'}</p>
@@ -423,7 +423,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         minWidth: 340,
         flex: '0 1 auto',
         background: 'var(--color-bg-secondary)',
-        borderLeft: '1px solid var(--color-border-mid)',
+        borderLeft: '1px solid var(--color-border)',
       }}
     >
       {/* ── Header ── */}
@@ -433,7 +433,6 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           padding: '12px 16px',
           background: 'var(--color-bg-elevated)',
           borderBottom: '1px solid var(--color-border)',
-          boxShadow: 'var(--shadow-card)',
         }}
       >
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
@@ -469,7 +468,6 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         style={{
           background: 'var(--color-bg-elevated)',
           borderTop: '1px solid var(--color-border)',
-          boxShadow: 'var(--shadow-card)',
         }}
         className="shrink-0"
       >
