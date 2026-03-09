@@ -201,7 +201,7 @@ export default function SearchPage() {
           >
             <div
               className="h-full overflow-y-auto"
-              style={{ width: 280, padding: '20px 16px' }}
+              style={{ width: 280, padding: '14px 16px' }}
             >
               <div className="flex items-center justify-between" style={{ marginBottom: 16 }}>
                 <h3
