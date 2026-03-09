@@ -364,7 +364,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid var(--color-border)',
+          borderLeft: 'none',
         }}
       >
         <div className="w-6 h-6 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
@@ -387,7 +387,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           minWidth: 340,
           flex: '0 1 auto',
           background: 'var(--color-bg-secondary)',
-          borderLeft: '1px solid var(--color-border)',
+          borderLeft: 'none',
         }}
       >
         <p className="text-status-red text-sm">{error || 'Document not found'}</p>
@@ -423,7 +423,7 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         minWidth: 340,
         flex: '0 1 auto',
         background: 'var(--color-bg-secondary)',
-        borderLeft: '1px solid var(--color-border)',
+        borderLeft: 'none',
       }}
     >
       {/* ── Header ── */}
