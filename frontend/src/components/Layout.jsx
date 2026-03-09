@@ -2,6 +2,7 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { LogOut, Sun, Moon } from 'lucide-react';
+import PortalNav from './PortalNav';
 import { getTheme, saveTheme, applyTheme } from '../lib/theme';
 
 export default function Layout() {
@@ -23,6 +24,7 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
+      <PortalNav />
       {/* Top bar */}
       <header className="flex items-center justify-between px-6 bg-bg-sidebar border-b border-border shrink-0" style={{ paddingTop: 20, paddingBottom: 20 }}>
         <div style={{ paddingLeft: 8 }}>
