@@ -2,15 +2,16 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { LogOut, Sun, Moon } from 'lucide-react';
+import { getTheme, saveTheme, applyTheme } from '../lib/theme';
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
+  const [theme, setTheme] = useState(() => getTheme());
 
   useEffect(() => {
-    document.documentElement.classList.toggle('light', theme === 'light');
-    localStorage.setItem('theme', theme);
+    applyTheme(theme);
+    saveTheme(theme);
   }, [theme]);
 
   const handleLogout = async () => {
@@ -30,7 +31,7 @@ export default function Layout() {
           </p>
           <h1 className="font-display text-[24px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
-        <div className="flex items-center gap-3 pr-6">
+        <div className="flex items-center gap-3" style={{ paddingRight: 8 }}>
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
