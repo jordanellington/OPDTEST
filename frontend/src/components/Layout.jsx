@@ -26,7 +26,7 @@ export default function Layout() {
     { to: '/', label: 'Dashboard', end: true },
   ];
 
-  const placeholderNav = ['People', 'Settings'];
+  const placeholderNav = ['Site Members', 'Settings'];
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
