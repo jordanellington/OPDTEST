@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { LogOut, Sun, Moon } from 'lucide-react';
@@ -22,15 +22,41 @@ export default function Layout() {
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
 
+  const mainNav = [
+    { to: '/', label: 'Dashboard', end: true },
+    { to: '/people', label: 'People' },
+    { to: '/settings', label: 'Settings' },
+  ];
+
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-bg-primary">
       <PortalNav />
       {/* Top bar */}
-      <header className="flex items-center justify-between bg-bg-sidebar border-b border-border shrink-0" style={{ padding: '14px 24px' }}>
-        <div style={{ paddingLeft: 8 }}>
+      <header className="flex items-center bg-bg-sidebar border-b border-border shrink-0" style={{ padding: '14px 24px' }}>
+        <div style={{ flexShrink: 0 }}>
           <h1 className="font-display text-[20px] font-light text-text-primary leading-none tracking-[-0.01em]">Opinion Letters</h1>
         </div>
-        <div className="flex items-center gap-3" style={{ paddingRight: 8 }}>
+
+        <nav className="top-nav-links flex items-center" style={{ marginLeft: 32, gap: 4 }}>
+          {mainNav.map(({ to, label, end }) => (
+            <NavLink key={to} to={to} end={end}
+              className="text-[14px] transition-all"
+              style={({ isActive }) => ({
+                padding: '6px 16px',
+                borderRadius: 6,
+                fontWeight: isActive ? 600 : 500,
+                color: isActive ? 'var(--color-text-primary)' : 'var(--color-text-secondary)',
+                background: isActive ? 'var(--color-bg-elevated)' : 'transparent',
+              })}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div style={{ flex: 1 }} />
+
+        <div className="flex items-center gap-3" style={{ flexShrink: 0 }}>
           <button
             onClick={toggleTheme}
             className="p-1.5 rounded-md text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
