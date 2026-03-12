@@ -153,6 +153,11 @@ body {
   color: #e6eae8;
 }
 
+/* Center page number input in PDF viewer toolbar */
+.rpv-core__textbox-input[type="text"] {
+  text-align: center !important;
+}
+
 .rpv-dark-theme .rpv-zoom__popover-target-scale {
   color: #9aa69f;
 }

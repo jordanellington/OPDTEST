@@ -73,7 +73,7 @@ function PdfViewer({ fileUrl, searchQuery, actionButtons }) {
 
   const toolBtnStyle = {
     background: 'none', border: 'none', cursor: 'pointer',
-    color: 'var(--color-text-muted)', padding: '3px 5px', borderRadius: 4,
+    color: 'var(--color-text-secondary)', padding: '5px 8px', borderRadius: 4,
     display: 'flex', alignItems: 'center',
   };
 
@@ -112,19 +112,20 @@ function PdfViewer({ fileUrl, searchQuery, actionButtons }) {
                         background: 'var(--color-bg-secondary)',
                         border: '1px solid var(--color-border)',
                         borderRadius: 7,
-                        padding: '2px 3px',
+                        padding: '3px 5px',
                         gap: 1,
+                        height: 30,
                       }}
                     >
                       <GoToPreviousPage>
                         {(p) => (
                           <button onClick={p.onClick} disabled={p.isDisabled}
-                            style={{ ...toolBtnStyle, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
+                            style={{ ...toolBtnStyle, padding: '0 12px', height: '100%', fontSize: 18, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
                             ‹
                           </button>
                         )}
                       </GoToPreviousPage>
-                      <div className="flex items-center gap-1" style={{ color: 'var(--color-text-muted)' }}>
+                      <div className="flex items-center justify-center gap-1" style={{ color: 'var(--color-text-muted)', padding: '0 4px', minWidth: 52 }}>
                         <CurrentPageInput />
                         <span style={{ opacity: 0.5 }}>/</span>
                         <NumberOfPages />
@@ -132,7 +133,7 @@ function PdfViewer({ fileUrl, searchQuery, actionButtons }) {
                       <GoToNextPage>
                         {(p) => (
                           <button onClick={p.onClick} disabled={p.isDisabled}
-                            style={{ ...toolBtnStyle, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
+                            style={{ ...toolBtnStyle, padding: '0 12px', height: '100%', fontSize: 18, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
                             ›
                           </button>
                         )}
@@ -146,18 +147,19 @@ function PdfViewer({ fileUrl, searchQuery, actionButtons }) {
                         background: 'var(--color-bg-secondary)',
                         border: '1px solid var(--color-border)',
                         borderRadius: 7,
-                        padding: '2px 3px',
+                        padding: '3px 5px',
                         gap: 1,
+                        height: 30,
                       }}
                     >
                       <ZoomOut>
-                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, fontSize: 13, padding: '3px 5px' }}>−</button>}
+                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, padding: '0 12px', height: '100%', fontSize: 15 }}>−</button>}
                       </ZoomOut>
                       <Zoom>
-                        {(p) => <span style={{ color: 'var(--color-text-muted)', fontSize: 10, minWidth: 32, textAlign: 'center' }}>{Math.round(p.scale * 100)}%</span>}
+                        {(p) => <span style={{ color: 'var(--color-text-muted)', fontSize: 10, minWidth: 36, textAlign: 'center', padding: '0 2px' }}>{Math.round(p.scale * 100)}%</span>}
                       </Zoom>
                       <ZoomIn>
-                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, fontSize: 13, padding: '3px 5px' }}>+</button>}
+                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, padding: '0 12px', height: '100%', fontSize: 15 }}>+</button>}
                       </ZoomIn>
                     </div>
 
