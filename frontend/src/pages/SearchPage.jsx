@@ -719,6 +719,7 @@ export default function SearchPage() {
                         key={(result.entry?.id || result.id || i) + '-' + i}
                         result={result}
                         index={i}
+                        isSelected={selectedNodeId === (result.entry?.id || result.id)}
                         onClick={() => {
                           const nodeId = result.entry?.id || result.id;
                           if (nodeId) setSelectedNodeId(nodeId);

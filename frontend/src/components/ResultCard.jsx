@@ -23,7 +23,7 @@ function formatDate(dateStr) {
   }
 }
 
-export default function ResultCard({ result, onClick, index = 0 }) {
+export default function ResultCard({ result, onClick, index = 0, isSelected = false }) {
   const props = result.entry?.properties || result.properties || {};
   const name = result.entry?.name || result.name || 'Untitled';
 
@@ -58,19 +58,32 @@ export default function ResultCard({ result, onClick, index = 0 }) {
         padding: '16px 20px',
         borderRadius: 10,
         marginBottom: 6,
-        background: 'var(--color-bg-secondary)',
-        border: '1px solid var(--color-border-mid)',
+        background: isSelected ? 'var(--color-bg-elevated)' : 'var(--color-bg-secondary)',
+        border: isSelected ? '1px solid var(--color-border-strong)' : '1px solid var(--color-border-mid)',
         boxShadow: 'var(--shadow-card)',
+        position: 'relative',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'var(--color-bg-elevated)';
-        e.currentTarget.style.borderColor = 'var(--color-border-strong)';
+        if (!isSelected) {
+          e.currentTarget.style.background = 'var(--color-bg-elevated)';
+          e.currentTarget.style.borderColor = 'var(--color-border-strong)';
+        }
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'var(--color-bg-secondary)';
-        e.currentTarget.style.borderColor = 'var(--color-border-mid)';
+        if (!isSelected) {
+          e.currentTarget.style.background = 'var(--color-bg-secondary)';
+          e.currentTarget.style.borderColor = 'var(--color-border-mid)';
+        }
       }}
     >
+      {/* Selected accent bar */}
+      {isSelected && (
+        <div style={{
+          position: 'absolute', left: 0, top: 8, bottom: 8,
+          width: 3, borderRadius: 2, background: 'var(--color-accent)',
+        }} />
+      )}
+
       {/* Row 1: Document name + page count */}
       <div className="flex items-start gap-3" style={{ marginBottom: 10 }}>
         <FileText
