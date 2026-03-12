@@ -97,8 +97,8 @@ function getMetadataFields(props) {
   ];
 }
 
-/* ── PDF Viewer (same as FDKBTEST) ── */
-function PdfViewer({ fileUrl, searchQuery }) {
+/* ── PDF Viewer with unified bottom bar ── */
+function PdfViewer({ fileUrl, searchQuery, actionButtons }) {
   const toolbarPluginInstance = toolbarPlugin();
   const searchPluginInstance = searchPlugin(searchQuery ? { keyword: searchQuery } : undefined);
   const { Toolbar } = toolbarPluginInstance;
@@ -125,131 +125,15 @@ function PdfViewer({ fileUrl, searchQuery }) {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  const toolBtnStyle = {
+    background: 'none', border: 'none', cursor: 'pointer',
+    color: 'var(--color-text-muted)', padding: '3px 5px', borderRadius: 4,
+    display: 'flex', alignItems: 'center',
+  };
+
   return (
     <Worker workerUrl={WORKER_URL}>
       <div className="h-full flex flex-col rpv-dark-theme" style={{ backgroundColor: 'var(--color-bg-elevated)' }}>
-        {/* Custom toolbar */}
-        <div
-          className="viewer-toolbar shrink-0 flex items-center justify-between"
-          style={{
-            padding: '6px 12px',
-            background: 'var(--color-bg-secondary)',
-            borderBottom: '1px solid var(--color-border)',
-          }}
-        >
-          <Toolbar>
-            {(props) => {
-              const {
-                CurrentPageInput,
-                GoToNextPage,
-                GoToPreviousPage,
-                NumberOfPages,
-                ZoomIn,
-                ZoomOut,
-                Zoom,
-              } = props;
-              return (
-                <div className="flex items-center gap-1 w-full" style={{ fontSize: 12 }}>
-                  {/* Page navigation */}
-                  <div className="flex items-center gap-1">
-                    <GoToPreviousPage>
-                      {(props) => (
-                        <button
-                          onClick={props.onClick}
-                          disabled={props.isDisabled}
-                          style={{
-                            background: 'none', border: 'none', cursor: props.isDisabled ? 'default' : 'pointer',
-                            color: props.isDisabled ? 'var(--color-text-dim)' : 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
-                            display: 'flex', alignItems: 'center',
-                          }}
-                        >
-                          ‹
-                        </button>
-                      )}
-                    </GoToPreviousPage>
-                    <div className="flex items-center gap-1" style={{ color: 'var(--color-text-secondary)' }}>
-                      <CurrentPageInput />
-                      <span style={{ color: 'var(--color-text-muted)' }}>/</span>
-                      <NumberOfPages />
-                    </div>
-                    <GoToNextPage>
-                      {(props) => (
-                        <button
-                          onClick={props.onClick}
-                          disabled={props.isDisabled}
-                          style={{
-                            background: 'none', border: 'none', cursor: props.isDisabled ? 'default' : 'pointer',
-                            color: props.isDisabled ? 'var(--color-text-dim)' : 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
-                            display: 'flex', alignItems: 'center',
-                          }}
-                        >
-                          ›
-                        </button>
-                      )}
-                    </GoToNextPage>
-                  </div>
-
-                  {/* Spacer */}
-                  <div style={{ flex: 1 }} />
-
-                  {/* Search */}
-                  <ShowSearchPopover>
-                    {(props) => (
-                      <button
-                        onClick={props.onClick}
-                        style={{
-                          background: 'none', border: 'none', cursor: 'pointer',
-                          color: 'var(--color-text-secondary)', padding: '4px 6px', borderRadius: 4,
-                          display: 'flex', alignItems: 'center',
-                        }}
-                      >
-                        <Search size={13} />
-                      </button>
-                    )}
-                  </ShowSearchPopover>
-
-                  {/* Zoom */}
-                  <div className="flex items-center gap-1">
-                    <ZoomOut>
-                      {(props) => (
-                        <button
-                          onClick={props.onClick}
-                          style={{
-                            background: 'none', border: 'none', cursor: 'pointer',
-                            color: 'var(--color-text-secondary)', padding: '4px 8px', borderRadius: 4, fontSize: 14,
-                          }}
-                        >
-                          −
-                        </button>
-                      )}
-                    </ZoomOut>
-                    <Zoom>
-                      {(props) => (
-                        <span style={{ color: 'var(--color-text-secondary)', fontSize: 11, minWidth: 40, textAlign: 'center' }}>
-                          {Math.round(props.scale * 100)}%
-                        </span>
-                      )}
-                    </Zoom>
-                    <ZoomIn>
-                      {(props) => (
-                        <button
-                          onClick={props.onClick}
-                          style={{
-                            background: 'none', border: 'none', cursor: 'pointer',
-                            color: 'var(--color-text-secondary)', padding: '4px 8px', borderRadius: 4, fontSize: 14,
-                          }}
-                        >
-                          +
-                        </button>
-                      )}
-                    </ZoomIn>
-                  </div>
-                </div>
-              );
-            }}
-          </Toolbar>
-        </div>
-
         {/* PDF pages */}
         <div className="flex-1 min-h-0" style={{ background: 'var(--color-bg-elevated)' }}>
           <Viewer
@@ -258,13 +142,101 @@ function PdfViewer({ fileUrl, searchQuery }) {
             theme="dark"
           />
         </div>
+
+        {/* Unified bottom bar: page nav + zoom + action buttons */}
+        <div
+          className="shrink-0"
+          style={{
+            background: 'var(--color-bg-elevated)',
+            borderTop: '1px solid var(--color-border)',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.04)',
+          }}
+        >
+          <Toolbar>
+            {(props) => {
+              const { CurrentPageInput, GoToNextPage, GoToPreviousPage, NumberOfPages, ZoomIn, ZoomOut, Zoom } = props;
+              return (
+                <div className="flex items-center justify-between" style={{ padding: '6px 14px', fontSize: 11 }}>
+                  {/* Left: page nav + zoom + search in capsules */}
+                  <div className="flex items-center" style={{ gap: 4 }}>
+                    {/* Page nav group */}
+                    <div
+                      className="flex items-center"
+                      style={{
+                        background: 'var(--color-bg-secondary)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 7,
+                        padding: '2px 3px',
+                        gap: 1,
+                      }}
+                    >
+                      <GoToPreviousPage>
+                        {(p) => (
+                          <button onClick={p.onClick} disabled={p.isDisabled}
+                            style={{ ...toolBtnStyle, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
+                            ‹
+                          </button>
+                        )}
+                      </GoToPreviousPage>
+                      <div className="flex items-center gap-1" style={{ color: 'var(--color-text-muted)' }}>
+                        <CurrentPageInput />
+                        <span style={{ opacity: 0.5 }}>/</span>
+                        <NumberOfPages />
+                      </div>
+                      <GoToNextPage>
+                        {(p) => (
+                          <button onClick={p.onClick} disabled={p.isDisabled}
+                            style={{ ...toolBtnStyle, cursor: p.isDisabled ? 'default' : 'pointer', opacity: p.isDisabled ? 0.3 : 1 }}>
+                            ›
+                          </button>
+                        )}
+                      </GoToNextPage>
+                    </div>
+
+                    {/* Zoom group */}
+                    <div
+                      className="flex items-center"
+                      style={{
+                        background: 'var(--color-bg-secondary)',
+                        border: '1px solid var(--color-border)',
+                        borderRadius: 7,
+                        padding: '2px 3px',
+                        gap: 1,
+                      }}
+                    >
+                      <ZoomOut>
+                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, fontSize: 13, padding: '3px 5px' }}>−</button>}
+                      </ZoomOut>
+                      <Zoom>
+                        {(p) => <span style={{ color: 'var(--color-text-muted)', fontSize: 10, minWidth: 32, textAlign: 'center' }}>{Math.round(p.scale * 100)}%</span>}
+                      </Zoom>
+                      <ZoomIn>
+                        {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, fontSize: 13, padding: '3px 5px' }}>+</button>}
+                      </ZoomIn>
+                    </div>
+
+                    {/* Search button */}
+                    <ShowSearchPopover>
+                      {(p) => <button onClick={p.onClick} style={{ ...toolBtnStyle, padding: '4px 7px' }}><Search size={13} /></button>}
+                    </ShowSearchPopover>
+                  </div>
+
+                  {/* Right: action buttons */}
+                  <div className="flex items-center" style={{ gap: 8 }}>
+                    {actionButtons}
+                  </div>
+                </div>
+              );
+            }}
+          </Toolbar>
+        </div>
       </div>
     </Worker>
   );
 }
 
 /* ── Rendition Viewer — tries PDF rendition for non-PDF files ── */
-function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery }) {
+function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery, actionButtons }) {
   const [status, setStatus] = useState('loading'); // loading | ready | unavailable
   const renditionUrl = getRenditionUrl(nodeId);
 
@@ -303,7 +275,7 @@ function RenditionViewer({ nodeId, contentUrl, mimeType, searchQuery }) {
   }
 
   if (status === 'ready') {
-    return <PdfViewer fileUrl={renditionUrl} searchQuery={searchQuery} />;
+    return <PdfViewer fileUrl={renditionUrl} searchQuery={searchQuery} actionButtons={actionButtons} />;
   }
 
   // Fallback — no rendition available
@@ -407,8 +379,72 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
     ? (node.content.sizeInBytes / 1024 / 1024).toFixed(2) + ' MB'
     : '—';
   const metadataFields = getMetadataFields(props);
-  const clientName = props['corpkmdcf:clientName'] || '—';
-  const opinionDate = fmtDate(props['corpkmdcf:dateOfOpinion']);
+
+  /* Action buttons passed into the unified bottom bar */
+  const actionButtons = (
+    <>
+      {/* Compact metadata chips */}
+      <span className="flex items-center gap-1 text-[10px] text-text-muted">
+        <Layers size={10} />
+        {pages} pg
+      </span>
+      <span className="text-[10px] text-text-muted">{size}</span>
+
+      {/* Download */}
+      <a
+        href={getContentUrl(node.id || nodeId, true)}
+        download={name}
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
+        style={{
+          padding: '7px 16px', borderRadius: 999, color: 'var(--color-text-secondary)',
+          border: '1px solid var(--color-border)', background: 'transparent',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.06)', textDecoration: 'none',
+        }}
+      >
+        <Download size={13} />
+        Download
+      </a>
+
+      {/* Expand details */}
+      <button
+        onClick={() => setDetailsOpen(!detailsOpen)}
+        className="p-1 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
+        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+        title={detailsOpen ? 'Hide details' : 'Show details'}
+      >
+        {detailsOpen ? <ChevronDown size={13} /> : <ChevronUp size={13} />}
+      </button>
+
+      {/* Ask AI — Coming Soon */}
+      {isPdf && (
+        <button
+          disabled
+          title="AI chat coming soon"
+          className="shrink-0 inline-flex items-center gap-1.5 text-[12px] font-semibold cursor-not-allowed"
+          style={{
+            padding: '7px 16px', borderRadius: 999,
+            background: 'var(--color-overlay-subtle)',
+            color: 'var(--color-text-secondary)',
+            border: '1px solid var(--color-border-mid)',
+            opacity: 0.7,
+          }}
+        >
+          <Sparkles size={13} />
+          Ask AI
+          <span
+            className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider"
+            style={{
+              background: 'rgba(200,164,78,0.15)',
+              color: 'var(--color-accent-gold)',
+              border: '1px solid var(--color-border-gold)',
+            }}
+          >
+            Soon
+          </span>
+        </button>
+      )}
+    </>
+  );
 
   return (
     <motion.div
@@ -456,95 +492,28 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
       <div className="flex-1 min-h-0 flex flex-col">
         <div className="min-h-0 overflow-hidden" style={{ flex: '1 1 0%' }}>
           {isPdf ? (
-            <PdfViewer fileUrl={contentUrl} searchQuery={searchQuery} />
+            <PdfViewer fileUrl={contentUrl} searchQuery={searchQuery} actionButtons={actionButtons} />
           ) : (
-            <RenditionViewer nodeId={node.id || nodeId} contentUrl={contentUrl} mimeType={node.content?.mimeType} searchQuery={searchQuery} />
+            <RenditionViewer nodeId={node.id || nodeId} contentUrl={contentUrl} mimeType={node.content?.mimeType} searchQuery={searchQuery} actionButtons={actionButtons} />
           )}
         </div>
       </div>
 
-      {/* ── Compact metadata bar + expandable details ── */}
-      <div
-        style={{
-          background: 'var(--color-bg-elevated)',
-          borderTop: '1px solid var(--color-border)',
-        }}
-        className="shrink-0"
-      >
+      {/* ── Expandable Details Grid ── */}
+      {detailsOpen && (
         <div
-          className="viewer-meta-bar flex items-center gap-5 text-[11px] text-text-secondary"
-          style={{ padding: '10px 12px 10px 16px' }}
+          style={{
+            background: 'var(--color-bg-elevated)',
+            borderTop: '1px solid var(--color-border)',
+          }}
+          className="shrink-0"
         >
-          <span className="flex items-center gap-1.5">
-            <Building2 size={10} className="text-text-muted" />
-            {clientName}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Calendar size={10} className="text-text-muted" />
-            {opinionDate}
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Layers size={10} className="text-text-muted" />
-            {pages} pg
-          </span>
-          <span className="text-text-muted">{size}</span>
-
-          {/* Download */}
-          <a
-            href={getContentUrl(node.id || nodeId, true)}
-            download={name}
-            className="inline-flex items-center gap-1.5 px-3 py-1 bg-accent text-text-on-dark rounded-md text-[10px] font-semibold hover:bg-accent-hover transition-colors"
-          >
-            <Download size={11} />
-            Download
-          </a>
-
-          {/* Expand details */}
-          <button
-            onClick={() => setDetailsOpen(!detailsOpen)}
-            className="p-1 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
-            title={detailsOpen ? 'Hide details' : 'Show details'}
-          >
-            {detailsOpen ? <ChevronDown size={13} /> : <ChevronUp size={13} />}
-          </button>
-
-          {/* Ask AI — Coming Soon */}
-          {isPdf && (
-            <button
-              disabled
-              title="AI chat coming soon"
-              className="ml-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-semibold cursor-not-allowed"
-              style={{
-                background: 'var(--color-overlay-subtle)',
-                color: 'var(--color-text-secondary)',
-                border: '1px solid var(--color-border-mid)',
-                opacity: 0.7,
-              }}
-            >
-              <Sparkles size={11} />
-              Ask AI
-              <span
-                className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider"
-                style={{
-                  background: 'rgba(200,164,78,0.15)',
-                  color: 'var(--color-accent-gold)',
-                  border: '1px solid var(--color-border-gold)',
-                }}
-              >
-                Soon
-              </span>
-            </button>
-          )}
-        </div>
-
-        {/* ── Expandable Details Grid ── */}
-        {detailsOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            style={{ padding: '4px 16px 14px', borderTop: '1px solid var(--color-border)', overflow: 'hidden' }}
+            style={{ padding: '4px 16px 14px', overflow: 'hidden' }}
           >
             <div className="details-grid grid grid-cols-3 gap-x-6 gap-y-3">
               {metadataFields.map((field) => {
@@ -565,8 +534,8 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
               })}
             </div>
           </motion.div>
-        )}
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 }

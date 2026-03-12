@@ -309,9 +309,6 @@ html.light .rpv-dark-theme .rpv-core__page-layer { box-shadow: 0 2px 8px rgba(0,
     min-width: 0 !important;
   }
   .viewer-header { padding: 12px 16px !important; }
-  .viewer-toolbar { padding: 8px 12px !important; }
-  .viewer-toolbar button { min-height: 36px !important; min-width: 36px !important; }
-  .viewer-meta-bar { flex-wrap: wrap !important; gap: 8px !important; }
 }
 @media (min-width: 768px) {
   .document-viewer-panel {
