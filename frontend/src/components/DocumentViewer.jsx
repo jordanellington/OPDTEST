@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-  X, Download, FileText, Calendar, Layers, ExternalLink, Loader2,
-  ChevronDown, ChevronUp, Sparkles, Search, User, Building2,
-  Briefcase, MapPin, Scale, Globe, Shield, Hash, Users, Gavel,
+  X, Download, FileText, ExternalLink, Loader2,
+  Sparkles, Search, Mail,
 } from 'lucide-react';
 import { getNode, getContentUrl, getRenditionUrl } from '../lib/api';
 
@@ -42,59 +41,6 @@ function PracticeAreaBadge({ value }) {
       {label}
     </span>
   );
-}
-
-/* ── Helpers ── */
-function fmt(val) {
-  if (val == null || val === '') return '—';
-  return String(val);
-}
-
-function fmtDate(val) {
-  if (!val) return '—';
-  try {
-    return new Date(val).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  } catch {
-    return val;
-  }
-}
-
-function fmtArray(val) {
-  if (!val) return '—';
-  const arr = Array.isArray(val) ? val : [val];
-  const filtered = arr.filter(v => v != null && v !== '');
-  return filtered.length > 0 ? filtered.join(', ') : '—';
-}
-
-function fmtArrayFiltered(val) {
-  if (!val) return '—';
-  const arr = Array.isArray(val) ? val : [val];
-  const filtered = arr.filter(v => v != null && String(v).trim() !== '');
-  return filtered.length > 0 ? filtered.join(', ') : '—';
-}
-
-/* ── Metadata field definition ── */
-function getMetadataFields(props) {
-  return [
-    { label: 'Client',              value: fmt(props['corpkmdcf:clientName']),                         icon: Building2 },
-    { label: 'Practice Area',       value: props['corpkmdcf:opinionTypes'],                            icon: Briefcase, badge: true },
-    { label: 'Opinion Provider',    value: fmt(props['corpkmdcf:opinionProvider']),                    icon: Scale },
-    { label: 'Date of Opinion',     value: fmtDate(props['corpkmdcf:dateOfOpinion']),                  icon: Calendar },
-    { label: 'Signatory',           value: fmt(props['corpkmdcf:covingtonLawyerSigningOpinion']),      icon: User },
-    { label: 'Committee Member',    value: fmt(props['corpkmdcf:nameOpinionCommitteeMember']),         icon: User },
-    { label: 'Lead Lawyers',        value: fmtArray(props['corpkmdcf:namesOfLawyers']),                icon: Users },
-    { label: 'Covington Office',    value: fmt(props['corpkmdcf:covingtonOffice']),                    icon: MapPin },
-    { label: 'Matter',              value: fmt(props['corpkmdcf:matterName']),                         icon: Briefcase },
-    { label: 'Client Matter #',     value: fmt(props['corpkmdcf:clientMatterNumber']),                 icon: Hash },
-    { label: 'US Jurisdictions',    value: fmtArrayFiltered(props['corpkmdcf:usJurisdictions']),       icon: Globe },
-    { label: 'Non-US Jurisdictions',value: fmtArrayFiltered(props['corpkmdcf:nonUsJurisdictions']),    icon: Globe },
-    { label: 'Offering Type',       value: fmt(props['corpkmdcf:typeOfOffering']),                     icon: Layers },
-    { label: 'Security Type',       value: fmtArray(props['corpkmdcf:typeOfSecurity']),                icon: Shield },
-    { label: 'SEC Filing',          value: fmt(props['corpkmdcf:opinionFilledWithSec']),               icon: Gavel },
-    { label: 'Recipients',          value: fmtArray(props['corpkmdcf:recipientsAndRoles']),            icon: Users },
-    { label: 'Other Firms',         value: fmtArray(props['corpkmdcf:firmsAndRoles']),                 icon: Building2 },
-    { label: 'Pages',               value: (props['eci:pages'] != null && props['eci:pages'] > 0) ? String(props['eci:pages']) : '—', icon: Layers },
-  ];
 }
 
 /* ── PDF Viewer with unified bottom bar ── */
@@ -303,8 +249,6 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
   const [doc, setDoc] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [detailsOpen, setDetailsOpen] = useState(false);
-
   useEffect(() => {
     if (!nodeId) return;
     setLoading(true);
@@ -373,24 +317,10 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
   const name = node.name || 'Untitled';
   const contentUrl = getContentUrl(node.id || nodeId);
   const isPdf = name.toLowerCase().endsWith('.pdf');
-  const rawPages = props['eci:pages'];
-  const pages = (rawPages != null && rawPages > 0) ? rawPages : '—';
-  const size = node.content?.sizeInBytes
-    ? (node.content.sizeInBytes / 1024 / 1024).toFixed(2) + ' MB'
-    : '—';
-  const metadataFields = getMetadataFields(props);
 
-  /* Action buttons passed into the unified bottom bar */
+  /* Action buttons passed into the unified bottom bar — matches FDKB layout */
   const actionButtons = (
     <>
-      {/* Compact metadata chips */}
-      <span className="flex items-center gap-1 text-[10px] text-text-muted">
-        <Layers size={10} />
-        {pages} pg
-      </span>
-      <span className="text-[10px] text-text-muted">{size}</span>
-
-      {/* Download */}
       <a
         href={getContentUrl(node.id || nodeId, true)}
         download={name}
@@ -404,29 +334,29 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         <Download size={13} />
         Download
       </a>
-
-      {/* Expand details */}
       <button
-        onClick={() => setDetailsOpen(!detailsOpen)}
-        className="p-1 rounded text-text-muted hover:text-text-primary hover:bg-bg-elevated transition-colors"
-        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        title={detailsOpen ? 'Hide details' : 'Show details'}
+        onClick={() => {}}
+        title="Email this document"
+        className="inline-flex items-center gap-1.5 text-[12px] font-medium transition-colors"
+        style={{
+          padding: '7px 16px', borderRadius: 999, color: 'var(--color-text-secondary)',
+          border: '1px solid var(--color-border)', background: 'transparent',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.06)', cursor: 'pointer',
+        }}
       >
-        {detailsOpen ? <ChevronDown size={13} /> : <ChevronUp size={13} />}
+        <Mail size={13} />
+        Email Me
       </button>
-
-      {/* Ask AI — Coming Soon */}
       {isPdf && (
         <button
           disabled
           title="AI chat coming soon"
-          className="shrink-0 inline-flex items-center gap-1.5 text-[12px] font-semibold cursor-not-allowed"
+          className="ask-ai-btn shrink-0 inline-flex items-center gap-1.5 text-[12px] font-semibold cursor-not-allowed transition-all"
           style={{
-            padding: '7px 16px', borderRadius: 999,
-            background: 'var(--color-overlay-subtle)',
-            color: 'var(--color-text-secondary)',
-            border: '1px solid var(--color-border-mid)',
-            opacity: 0.7,
+            padding: '7px 16px', borderRadius: 999, color: '#fff',
+            background: 'linear-gradient(135deg, #459e8c, #56BFA8)',
+            border: 'none', boxShadow: '0 1px 4px rgba(86,191,168,0.3)',
+            opacity: 0.7, position: 'relative', overflow: 'hidden',
           }}
         >
           <Sparkles size={13} />
@@ -434,9 +364,8 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
           <span
             className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[8px] font-bold uppercase tracking-wider"
             style={{
-              background: 'rgba(200,164,78,0.15)',
-              color: 'var(--color-accent-gold)',
-              border: '1px solid var(--color-border-gold)',
+              background: 'rgba(255,255,255,0.2)',
+              color: '#fff',
             }}
           >
             Soon
@@ -499,43 +428,6 @@ export default function DocumentViewer({ nodeId, onClose, searchQuery }) {
         </div>
       </div>
 
-      {/* ── Expandable Details Grid ── */}
-      {detailsOpen && (
-        <div
-          style={{
-            background: 'var(--color-bg-elevated)',
-            borderTop: '1px solid var(--color-border)',
-          }}
-          className="shrink-0"
-        >
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            style={{ padding: '4px 16px 14px', overflow: 'hidden' }}
-          >
-            <div className="details-grid grid grid-cols-3 gap-x-6 gap-y-3">
-              {metadataFields.map((field) => {
-                const Icon = field.icon;
-                return (
-                  <div key={field.label}>
-                    <p className="flex items-center gap-1 text-[9px] text-text-muted uppercase tracking-wider mb-1">
-                      <Icon size={9} />
-                      {field.label}
-                    </p>
-                    {field.badge ? (
-                      <PracticeAreaBadge value={field.value} />
-                    ) : (
-                      <p className="text-[11px] text-text-secondary leading-relaxed">{field.value}</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </motion.div>
-        </div>
-      )}
     </motion.div>
   );
 }
